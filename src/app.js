@@ -5,10 +5,10 @@ const cors = require("cors");
 const app = express();
 
 
-app.use(cors(
-    {
-    origin: "http://localhost:5173",
-    credentials: true,
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,//even if i am sending http instead https request it will accept it
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 }));
 app.use(express.json());
 app.use(cookieParser());

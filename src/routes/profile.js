@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 
 //Profile API
-profileRouter.post("/profile/view", userAuth, async (req,res) => {
+profileRouter.get("/profile/view", userAuth, async (req,res) => {
     try{
         const user = req.user;
         res.json({
