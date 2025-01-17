@@ -7,7 +7,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const user = require("../models/user");
 
-const USER_SAFE_DATA = "firstName lastName";
+const USER_SAFE_DATA = "firstName lastName photoUrl about";
 
 //making received requests to a user
 
@@ -85,19 +85,62 @@ requestRouter.get("/feed", userAuth, async (req,res) => {
             hideFromFeed.add(req.toUserId.toString());
         });
 
-        const user = await User.find({
+        const users = await User.find({
             $and: [ {_id: {$nin: Array.from(hideFromFeed)}},
                 {_id: {$ne: loggedInUser._id}}
 
             ],
         }).select(USER_SAFE_DATA).skip(skip).limit(limit); //skip() & limit() for pagination
-        res.json({dat: user});
+        res.json(users);
 
 
     } catch (error) {
         res.status(404).json({message: error.message});
     }
 });
+// requestRouter.get("/feed", userAuth, async (req, res) => {
+//     try {
+//         const loggedInUser = req.user;
+//         const page = req.query.page || 1; // Get page number from query
+//         let limit = req.query.limit || 3; // Get limit from query
+//         limit = limit > 50 ? 50 : limit; // Cap the limit to 50
+//         const skip = (page - 1) * limit; // Calculate skip value
+
+//         // Fetch connection requests for the logged-in user
+//         const connectionRequest = await ConnectionRequest.find({
+//             $or: [
+//                 { fromUserId: loggedInUser._id },
+//                 { toUserId: loggedInUser._id },
+//             ],
+//         }).select("fromUserId toUserId");
+
+//         // Prepare a set of users to exclude
+//         const hideFromFeed = new Set();
+//         connectionRequest.forEach((req) => {
+//             hideFromFeed.add(req.fromUserId.toString());
+//             hideFromFeed.add(req.toUserId.toString());
+//         });
+
+//         // Fetch users to show in the feed
+//         const users = await User.find({
+//             $and: [
+//                 { _id: { $nin: Array.from(hideFromFeed) } },
+//                 { _id: { $ne: loggedInUser._id } },
+//             ],
+//         })
+//             .select(USER_SAFE_DATA) // Only include safe fields
+//             .skip(skip)
+//             .limit(limit);
+
+//         // Send only the array of users
+//         res.json({users});
+
+//     } catch (error) {
+//         // Handle errors gracefully
+//         res.status(404).json({ message: error.message });
+//     }
+// });
+
 
 
 module.exports = requestRouter;

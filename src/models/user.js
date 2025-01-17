@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: 2,
         maxLength: 8,
+    },
+    about: {
+        type: String,
+        maxLength: 500,
+        default: "Hey there! I am using DevConnect",
     }
 }, {timestamps: true});
 
