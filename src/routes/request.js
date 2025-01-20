@@ -9,7 +9,8 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req,res) 
     try {const userId = req.user._id;
     const fromUserId = userId;
     const toUserId = req.params.toUserId
-    
+    const toUserIdObj = await User.findById(toUserId);
+    const toUserIdFirstName = toUserIdObj.firstName;
     const status = req.params.status;
     
 
@@ -44,7 +45,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req,res) 
 
     const data = await connectionRequest.save();
     res.json({
-        message: req.user.firstName + " " + "has" + " " +status + " " + toUserId.firstName,
+        message: req.user.firstName + " " + "has" + " " +status + " " + toUserIdFirstName,
         data,
     });
 

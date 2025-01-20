@@ -49,6 +49,7 @@ profileRouter.patch("/user/edit", userAuth, async (req, res) => {
     if (!isUpdateAllowed) {
       throw new Error("Invalid Update...");
     }
+
     const userId = req.user._id;
     const updatedUser = await User.findByIdAndUpdate({ _id: userId }, data, {
       runValidators: true,

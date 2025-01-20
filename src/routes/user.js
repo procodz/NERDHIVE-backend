@@ -18,7 +18,7 @@ requestRouter.get("/user/request/received", userAuth, async(req,res) => {
         const connectionRequest = await ConnectionRequest.find({
             toUserId: loggedInUser._id,   //making sure touserId is loggedInUser
             status: "interested", //loggedInUser can only see the request which are interested in him
-        }).populate("fromUserId", "firstName lastName"); // populate method is to finding from reference DB which is User in this case 
+        }).populate("fromUserId", "firstName lastName photoUrl"); // populate method is to finding from reference DB which is User in this case 
 
         res.json({
             messgae: "List of received requests",
