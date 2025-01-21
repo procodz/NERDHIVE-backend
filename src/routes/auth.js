@@ -46,7 +46,9 @@ authRouter.post("/login", async (req,res)=>{
             // res.cookie("token", token);//it will send the cookie to user with name token
             const token = await user.getJWT();
             res.cookie("token", token);
-            res.json([user]);//if true login 
+            res.json({message: "login successful",
+                data: user
+            });//if true login 
         }else{
             throw new Error("ivalid credintials");
         }
