@@ -3,6 +3,8 @@ const connectDB = require("./config/database")
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app = express();
+require('dotenv').config();
+
 
 
 app.use(cors({
@@ -36,7 +38,7 @@ app.use("/",projectRouter);
 
 connectDB().then(() => {
     console.log("DB connected");
-    app.listen(3000,() => {
+    app.listen(process.env.PORT,() => {
         console.log("Listening server 3000.....");
     })
 }).catch((err) =>{
