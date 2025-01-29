@@ -1,8 +1,8 @@
-# DevConnect: Professional Networking Platform
+# NERDHIVE: Professional Networking Platform
 
 ## Project Overview
 
-DevTinder is a professional networking platform designed to connect developers, allowing users to create profiles, send connection requests, and manage professional interactions.
+NERDHIVE is a professional networking platform designed to connect developers, allowing users to create profiles, send connection requests, and manage professional interactions.
 
 ## 🚀 Features
 
