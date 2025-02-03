@@ -4,7 +4,8 @@ const connectDB = require("./config/database")
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app = express();
-
+const http = require('http');
+const initilaizeSocket = require("./utils/socket");
 
 
 app.use(cors({
@@ -28,7 +29,9 @@ app.use("/", userRouter);
 app.use("/",projectRouter);
 
 
+const server = http.createServer(app);
 
+initilaizeSocket(server);
 
 
 
@@ -38,7 +41,7 @@ app.use("/",projectRouter);
 
 connectDB().then(() => {
     console.log("DB connected");
-    app.listen(process.env.PORT,() => {
+    server.listen(process.env.PORT,() => { // replace app.listen with server.listen
         console.log("Listening server 3000.....");
     })
 }).catch((err) =>{
