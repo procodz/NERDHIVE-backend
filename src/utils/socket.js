@@ -1,28 +1,70 @@
 const socket = require("socket.io");
 
+/**
+ * Initialize WebSocket server with Socket.IO
+ * @param {Object} server - HTTP/HTTPS server instance
+ */
 const initilaizeSocket = (server) => {
+    // Configure Socket.IO with CORS settings for development
     const io = socket(server, {
         cors: {
-            origin: "http://localhost:5173",
-            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+            origin: "http://localhost:5173", // Frontend development server URL
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'] // Allowed HTTP methods
         },
     });
 
-    io.on("connection", (socket) =>{
-        //handle events
-        socket.on("joinChat",() =>{
-            console.log("User Joined Chat");
+    // Handle new client connections
+    io.on("connection", (socket) => {
+        /**
+         * Handle chat room joining
+         * Creates a unique room identifier for two users to chat
+         * Room name is created by sorting and joining user IDs to ensure consistency
+         */
+        socket.on("joinChat", ({firstName, userId, targetUserId}) => {
+            try {
+                // Create a unique room ID by sorting user IDs alphabetically and joining with underscore
+                // This ensures the same room name regardless of who initiates the chat
+                const room = [userId, targetUserId].sort().join("_");
+                socket.join(room); // Add user to the chat room
+                console.log(`${firstName} Joined room: ${room}`);
+            } catch (error) {
+                console.error("Error in joinChat:", error);
+            }
         });
 
-        socket.on("sendMessage", () =>{
-            console.log("Message: ");
+        /**
+         * Handle sending messages between users
+         * Broadcasts the message to all users in the specific chat room
+         * @param {Object} messageData - Contains message details (firstName, userId, targetUserId, text)
+         */
+        socket.on("sendMessage", (messageData) => {
+            try {
+                const {firstName, userId, targetUserId, text} = messageData;
+                // Generate the same room ID using sorted user IDs
+                const room = [userId, targetUserId].sort().join("_");
+                
+                console.log(`${firstName} Sent message to room: ${room}`);
+                console.log("Message:", text);
+
+                // Emit message to all users in the room
+                // Include sender's ID (userId) so frontend can determine message alignment
+                io.to(room).emit("messagereceived", {
+                    firstName, 
+                    text,
+                    userId  // Important for frontend to identify message sender
+                });
+            } catch (error) {
+                console.error("Error in sendMessage:", error);
+            }
         });
 
-        socket.on("disconnect", () =>{
-            console.log("User Disconnected");
+        /**
+         * Handle client disconnection
+         * Logs when a user disconnects from the chat
+         */
+        socket.on("disconnect", () => {
         });
     });
 };
-
 
 module.exports = initilaizeSocket;
