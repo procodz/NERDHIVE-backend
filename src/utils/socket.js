@@ -1,5 +1,6 @@
 const socket = require("socket.io");
 const Chat = require("../models/chatModel");
+const ConnectionRequest = require("../models/connectionRequest");
 
 /**
  * Initialize WebSocket server with Socket.IO
@@ -43,10 +44,19 @@ const initilaizeSocket = (server) => {
         const { firstName, userId, targetUserId, text } = messageData;
         // Generate the same room ID using sorted user IDs
         const room = [userId, targetUserId].sort().join("_");
+        const existingConnectionRequest = await ConnectionRequest.findOne({  // it is checking if the req is alrady sent from both user 
+          $and: [
+              {fromUserId: userId,toUserId: targetUserId},
+              {fromUserId: targetUserId, toUserId: userId},
+              {status: "accepted"},
+  
+          ],
+      });
 
         console.log(`${firstName} Sent message to room: ${room}`);
         //save messages to database
-
+        if(existingConnectionRequest){
+          
         let chat = await Chat.findOne({
           participants: { $all: [userId, targetUserId] },
         });
@@ -67,7 +77,10 @@ const initilaizeSocket = (server) => {
           text,
           userId, // Important for frontend to identify message sender
         });
-      } catch (error) {
+      }else{
+        throw new Error("You are not connected with this user");
+      }
+    } catch (error) {
         console.error("Error in sendMessage:", error);
       }
     });
