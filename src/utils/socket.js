@@ -45,10 +45,9 @@ const initilaizeSocket = (server) => {
         // Generate the same room ID using sorted user IDs
         const room = [userId, targetUserId].sort().join("_");
         const existingConnectionRequest = await ConnectionRequest.findOne({  // it is checking if the req is alrady sent from both user 
-          $and: [
-              {fromUserId: userId,toUserId: targetUserId},
-              {fromUserId: targetUserId, toUserId: userId},
-              {status: "accepted"},
+          $or: [
+              {fromUserId: userId,toUserId: targetUserId, status: "accepted"},
+              {fromUserId: targetUserId, toUserId: userId, status: "accepted"},
   
           ],
       });
