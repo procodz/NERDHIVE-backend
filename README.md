@@ -44,6 +44,7 @@ NERDHIVE is more than just a professional network - it's a thriving ecosystem wh
 🎨 Rich User Profiles
 🤝 Smart Connection System
 📊 Interactive Dashboard
+💬 Real-time Chat
 ```
 
 ### 🌟 Project Hub
@@ -57,7 +58,6 @@ NERDHIVE is more than just a professional network - it's a thriving ecosystem wh
 
 ### 🎨 Coming Soon
 ```
-💬 Real-time Chat
 📊 Advanced Analytics
 🎯 AI Project Matching
 🔗 GitHub Integration
