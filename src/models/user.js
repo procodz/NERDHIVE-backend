@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema({
     about: {
         type: String,
         maxLength: 500,
-        default: "Hey there! I am using DevConnect",
+        default: "Hey there! I am using NerdHive",
     }
 }, {timestamps: true});
 
