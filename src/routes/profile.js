@@ -18,6 +18,21 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
   }
 });
 
+//view some other user's profile
+profileRouter.get("/profile/view/:userId", userAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).select(
+      "firstName lastName photoUrl about"
+    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    };
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+  });
+
 //delete a user from DB
 profileRouter.delete("/user/deleteUser", userAuth, async (req, res) => {
   const userId = req.body.userId;

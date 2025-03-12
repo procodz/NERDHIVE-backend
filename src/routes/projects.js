@@ -79,6 +79,23 @@ router.get('/projects/:id', userAuth, async (req, res) => {
     }
 });
 
+//Gets all public visible project of a user
+router.get('/projects/public/:userId', userAuth, async (req, res) => {
+    try {
+        const projects = await Project.find({
+            owner: req.params.userId,
+            visibility: 'public'
+        })
+        .populate('owner', 'firstName lastName photoUrl')
+        .populate('collaborators.user', 'firstName lastName photoUrl');
+        
+        res.json(projects);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 // Update project
 router.patch('/projects/:id', userAuth, async (req, res) => {
     const updates = Object.keys(req.body);
