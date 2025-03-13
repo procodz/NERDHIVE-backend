@@ -28,7 +28,7 @@ const initilaizeSocket = (server) => {
         // This ensures the same room name regardless of who initiates the chat
         const room = [userId, targetUserId].sort().join("_");
         socket.join(room); // Add user to the chat room
-        console.log(`${firstName} Joined room: ${room}`);
+        // console.log(`${firstName} Joined room: ${room}`);
       } catch (error) {
         console.error("Error in joinChat:", error);
       }
@@ -52,7 +52,7 @@ const initilaizeSocket = (server) => {
           ],
       });
 
-        console.log(`${firstName} Sent message to room: ${room}`);
+        // console.log(`${firstName} Sent message to room: ${room}`);
         //save messages to database
         if(existingConnectionRequest){
           
@@ -67,7 +67,7 @@ const initilaizeSocket = (server) => {
         }
         chat.messages.push({senderId: userId, text: text, time: new Date()});
         await chat.save();
-        console.log("Message:", text);
+        // console.log("Message:", text);
 
         // Emit message to all users in the room
         // Include sender's ID (userId) so frontend can determine message alignment
