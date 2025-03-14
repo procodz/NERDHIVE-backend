@@ -7,7 +7,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const user = require("../models/user");
 
-const USER_SAFE_DATA = "firstName lastName photoUrl about";
+const USER_SAFE_DATA = "firstName lastName photoUrl about skills";
 
 //making received requests to a user
 
