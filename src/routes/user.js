@@ -64,82 +64,69 @@ requestRouter.get("/user/connections", userAuth, async (req,res) =>{
     }
 });
 
-requestRouter.get("/feed", userAuth, async (req,res) => {
+requestRouter.get("/feed", userAuth, async (req, res) => {
     try {
-        
         const loggedInUser = req.user;
-        const page = req.query.page || 1; //take out page no from req
-        let limit = req.query.limit || 3; // take out limit from req
-        limit = limit > 50 ? 50: limit; // checks that user does not rquest more than 50 user feed
-        const skip = (page-1)*limit;
+        const page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 3;
+        limit = limit > 50 ? 50 : limit;
+        const skip = (page - 1) * limit;
 
-        const connectionRequest = await ConnectionRequest.find({
-            $or: [{fromUserId: loggedInUser._id},
-                {toUserId: loggedInUser._id}
-            ],
-        }).select("fromUserId toUserId");
+        // Aggregation pipeline to get all userIds to exclude (already connected or requested)
+        const connectionRequests = await ConnectionRequest.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { fromUserId: loggedInUser._id },
+                        { toUserId: loggedInUser._id }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    userIds: ["$fromUserId", "$toUserId"]
+                }
+            },
+            { $unwind: "$userIds" },
+            {
+                $group: {
+                    _id: null,
+                    allUserIds: { $addToSet: "$userIds" }
+                }
+            }
+        ]);
 
-        const hideFromFeed = new Set();
-        connectionRequest.forEach((req) =>{
-            hideFromFeed.add(req.fromUserId.toString());
-            hideFromFeed.add(req.toUserId.toString());
-        });
+        // Prepare set of userIds to exclude
+        let hideFromFeed = connectionRequests.length > 0 ? connectionRequests[0].allUserIds : [];
+        // Also exclude the logged-in user
+        hideFromFeed.push(loggedInUser._id);
 
-        const users = await User.find({
-            $and: [ {_id: {$nin: Array.from(hideFromFeed)}},
-                {_id: {$ne: loggedInUser._id}}
+        // Aggregation pipeline for paginated user feed
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $nin: hideFromFeed }
+                }
+            },
+            {
+                $project: {
+                    firstName: 1,
+                    lastName: 1,
+                    photoUrl: 1,
+                    about: 1,
+                    skills: 1
+                }
+            },
+            { $skip: skip },
+            { $limit: limit }
+        ]);
 
-            ],
-        }).select(USER_SAFE_DATA).skip(skip).limit(limit); //skip() & limit() for pagination
         res.json(users);
-
-
     } catch (error) {
-        res.status(404).json({message: error.message});
+        res.status(404).json({ message: error.message });
     }
 });
-// requestRouter.get("/feed", userAuth, async (req, res) => {
-//     try {
-//         const loggedInUser = req.user;
-//         const page = req.query.page || 1; // Get page number from query
-//         let limit = req.query.limit || 3; // Get limit from query
-//         limit = limit > 50 ? 50 : limit; // Cap the limit to 50
-//         const skip = (page - 1) * limit; // Calculate skip value
 
-//         // Fetch connection requests for the logged-in user
-//         const connectionRequest = await ConnectionRequest.find({
-//             $or: [
-//                 { fromUserId: loggedInUser._id },
-//                 { toUserId: loggedInUser._id },
-//             ],
-//         }).select("fromUserId toUserId");
-
-//         // Prepare a set of users to exclude
-//         const hideFromFeed = new Set();
-//         connectionRequest.forEach((req) => {
-//             hideFromFeed.add(req.fromUserId.toString());
-//             hideFromFeed.add(req.toUserId.toString());
-//         });
-
-//         // Fetch users to show in the feed
-//         const users = await User.find({
-//             $and: [
-//                 { _id: { $nin: Array.from(hideFromFeed) } },
-//                 { _id: { $ne: loggedInUser._id } },
-//             ],
-//         })
-//             .select(USER_SAFE_DATA) // Only include safe fields
-//             .skip(skip)
-//             .limit(limit);
-
-//         // Send only the array of users
-//         res.json({users});
-
-//     } catch (error) {
-//         // Handle errors gracefully
-//         res.status(404).json({ message: error.message });
-//     }
-// });
 
 
 
