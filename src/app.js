@@ -9,8 +9,11 @@ const initilaizeSocket = require("./utils/socket");
 
 
 app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,//even if i am sending http instead https request it will accept it
+  origin: [
+    "http://localhost:5173",
+    "https://nerdhive-frontend-81qg-git-main-procodzs-projects.vercel.app" // <-- add your Vercel frontend URL here
+  ],
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 }));
 app.use(express.json());
