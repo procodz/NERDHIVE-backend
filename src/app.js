@@ -11,7 +11,9 @@ const initilaizeSocket = require("./utils/socket");
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://nerdhive-frontend-81qg-git-main-procodzs-projects.vercel.app" // <-- add your Vercel frontend URL here
+    "http://localhost:3000",
+    "https://nerdhive-frontend-81qg-git-main-procodzs-projects.vercel.app",
+    "https://nerdhive-frontend.vercel.app" // <-- add your actual Vercel production URL if different
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
