@@ -13,7 +13,9 @@ app.use(cors({
     "http://localhost:5173",
     "http://localhost:3000",
     "https://nerdhive-frontend-81qg-git-main-procodzs-projects.vercel.app",
-    "https://nerdhive-frontend.vercel.app" // <-- add your actual Vercel production URL if different
+    "https://nerdhive-frontend.vercel.app",
+    "https://nerdhive.in",
+    "https://www.nerdhive.in"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
